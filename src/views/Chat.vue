@@ -4,10 +4,10 @@
     <div class="card">
       <div class="card-content">
         <ul class="message">
-          <li>
-            <span class="teal-text">Name</span>
-            <span class="grey-text text-darken-3"> message</span>
-            <div class="grey-text time">time</div>
+          <li v-for="(message, index) in messages" :key="index">
+            <span class="teal-text">{{ message.name }}</span>
+            <span class="grey-text text-darken-3"> {{ message.content }}</span>
+            <div class="grey-text time">{{ message.timestamp }}</div>
           </li>
         </ul>
       </div>
@@ -20,6 +20,8 @@
 
 <script>
 import newMessage from "@/components/newMessage";
+import db from "@/firebase/init";
+import moment from "moment";
 export default {
   name: "chat",
   props: ["name"],
@@ -27,7 +29,26 @@ export default {
     newMessage,
   },
   data() {
-    return {};
+    return {
+      messages: [],
+    };
+  },
+  created() {
+    let ref = db.collection("vee-chat-messages").orderBy("timestamp");
+
+    ref.onSnapshot((snapshot) => {
+      snapshot.docChanges().forEach((change) => {
+        if (change.type == "added") {
+          let doc = change.doc;
+          this.messages.push({
+            id: doc.id,
+            name: doc.data().name,
+            content: doc.data().content,
+            timestamp: moment(doc.data().timestamp).format("lll"),
+          });
+        }
+      });
+    });
   },
 };
 </script>
@@ -42,6 +63,6 @@ span {
 
 .time {
   display: block;
-  font-size: 1.2em;
+  font-size: 0.8em;
 }
 </style>
