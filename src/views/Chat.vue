@@ -3,7 +3,7 @@
     <h2 class="center white-text">Vee chat</h2>
     <div class="card">
       <div class="card-content">
-        <ul class="message">
+        <ul class="messages" v-chat-scroll>
           <li v-for="(message, index) in messages" :key="index">
             <span class="teal-text">{{ message.name }}</span>
             <span class="grey-text text-darken-3"> {{ message.content }}</span>
@@ -64,5 +64,18 @@ span {
 .time {
   display: block;
   font-size: 0.8em;
+}
+.messages {
+  max-height: 300px;
+  overflow: auto;
+}
+.messages::-webkit-scrollbar {
+  width: 3px;
+}
+.messages::-webkit-scrollbar-track {
+  background: #ddd;
+}
+.messages::-webkit-scrollbar-thumb {
+  background: #ddd;
 }
 </style>
